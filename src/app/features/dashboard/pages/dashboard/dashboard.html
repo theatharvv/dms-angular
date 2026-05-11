@@ -1,0 +1,214 @@
+<div class="page-wrapper">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Documents</h1>
+      <p class="page-subtitle">
+        {{ isSupplier ? 'Your uploaded documents' : 'All supplier documents' }}
+      </p>
+    </div>
+
+    @if (isSupplier) {
+      <button class="btn-upload" (click)="triggerUpload()">
+        <img src="/icons/upload.png" width="15" height="15" />
+        Upload
+      </button>
+    }
+
+    <input #fileInput type="file" style="display: none" (change)="onFileSelected($event)" />
+  </div>
+
+  <!-- Pending Changes Banner -->
+  @if (!isSupplier && pendingCount > 0) {
+    <div class="pending-banner">
+      <div class="pending-banner-left">
+        <div class="pending-dot"></div>
+        <span class="pending-text">
+          <strong>{{ pendingCount }}</strong>
+          {{ pendingCount === 1 ? 'file' : 'files' }} with unsaved status changes
+        </span>
+      </div>
+      <div class="pending-banner-actions">
+        <button class="btn-discard" (click)="discardPendingChanges()">
+          <img src="/icons/cross.png" width="19" height="19" />
+          Discard
+        </button>
+        <button class="btn-confirm-changes" (click)="confirmPendingChanges()">
+          <img src="/icons/tick.png" width="19" height="19" />
+          Apply {{ pendingCount }} {{ pendingCount === 1 ? 'Change' : 'Changes' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Table Card -->
+  <div class="table-card">
+    <app-pagination
+      [totalItems]="filteredFiles.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      (pageChanged)="onPageChanged($event)"
+      (pageSizeChanged)="onPageSizeChanged($event)"
+    ></app-pagination>
+
+    <table class="data-table">
+      <thead>
+        <tr class="header-row">
+          @if (!isSupplier) {
+            <th class="col-supplier">Supplier Name</th>
+          }
+
+          <th class="col-filename">File Name</th>
+
+          <th class="col-date sortable" (click)="sortBy('date')">
+            Created Date
+            <svg
+              class="sort-icon"
+              [class.asc]="sortField === 'date' && sortAsc"
+              [class.desc]="sortField === 'date' && !sortAsc"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+            >
+              <polyline points="6 9 12 3 18 9" />
+              <polyline points="6 15 12 21 18 15" />
+            </svg>
+          </th>
+
+          <th class="col-time sortable" (click)="sortBy('time')">
+            Created Time
+            <svg
+              class="sort-icon"
+              [class.asc]="sortField === 'time' && sortAsc"
+              [class.desc]="sortField === 'time' && !sortAsc"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+            >
+              <polyline points="6 9 12 3 18 9" />
+              <polyline points="6 15 12 21 18 15" />
+            </svg>
+          </th>
+
+          <th class="col-status">Status</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+
+        <app-filter-bar
+          [filters]="currentFilters"
+          [showSearch1]="!isSupplier"
+          placeholder1="Search supplier"
+          placeholder2="Search file"
+          (filtersChanged)="onFiltersChanged($event)"
+          (filtersCleared)="onFiltersCleared()"
+        ></app-filter-bar>
+      </thead>
+
+      <tbody>
+        @for (file of pagedFiles; track file.id) {
+          <tr class="data-row" [class.row-has-pending]="pendingChanges.has(file.id)">
+            @if (!isSupplier) {
+              <td class="col-supplier">
+                {{ getSupplierName(file.uploadedBy) }}
+              </td>
+            }
+
+            <td class="col-filename">
+              <span class="filename-cell">
+                <img src="/icons/file.png" width="19" height="19" />
+                {{ file.fileName }}
+              </span>
+            </td>
+
+            <td class="col-date">
+              <span class="cell-icon-text">
+                <img src="/icons/calendar.png" width="12" height="12" />
+                {{ file.createdAt | date: 'dd/MM/yyyy' }}
+              </span>
+            </td>
+
+            <td class="col-time">
+              <span class="cell-icon-text">
+                <img src="/icons/time.png" width="12" height="12" />
+                {{ file.createdAt | date: 'hh:mm a' }}
+              </span>
+            </td>
+
+            <td class="col-status">
+              @if (!isSupplier) {
+                <div class="status-select-wrapper">
+                  <select
+                    class="status-select"
+                    [ngClass]="statusSelectClass(getStagedStatus(file))"
+                    [ngModel]="getStagedStatus(file)"
+                    (ngModelChange)="onStatusChange(file, $event)"
+                  >
+                    @for (s of getAvailableStatuses(file); track s) {
+                      <option [value]="s">
+                        {{ s | titlecase }}
+                      </option>
+                    }
+                  </select>
+
+                  @if (pendingChanges.has(file.id)) {
+                    <span class="change-dot" title="Unsaved change"></span>
+                  }
+                </div>
+              } @else {
+                <span class="badge" [ngClass]="badgeClass(file.status)">
+                  @if (file.status === FileStatus.VERIFIED) {
+                    <img src="/icons/green-tick.png" width="12" height="12" />
+                  }
+                  @if (file.status === FileStatus.REJECTED) {
+                    <img src="/icons/red-cross.png" width="12" height="12" /> 
+                  }
+                  @if (file.status === FileStatus.PENDING) {
+                    <img src="/icons/pending.png" width="15" height="15" />
+                  }
+                  {{ file.status | titlecase }}
+                </span>
+              }
+            </td>
+
+            <td class="col-actions">
+              <div class="action-btns">
+                <button class="action-btn download" (click)="onDownload(file)">
+                  <img src="/icons/download-grey.png" width="20" height="20" />
+                </button>
+                <button class="action-btn delete" (click)="onDelete(file)">
+                  <img src="/icons/delete-grey.png" width="18" height="18" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td [attr.colspan]="isSupplier ? 5 : 6" class="empty-state">
+              <img src="/icons/file.png" width="60" height="60" />
+              <p>No documents found</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  @if (fileToDelete) {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-icon">
+          <img src="/icons/delete-red.png" width="24" height="24" />
+        </div>
+        <h3 class="modal-title">Delete Document?</h3>
+        <p class="modal-body">
+          <strong>{{ fileToDelete.fileName }}</strong> will be permanently removed.
+        </p>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+          <button class="btn-delete-confirm" (click)="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

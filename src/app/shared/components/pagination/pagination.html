@@ -1,0 +1,69 @@
+<div class="pagination" *ngIf="totalItems > 0">
+  <span class="page-info">
+    Showing {{ pageStart }}–{{ pageEnd }} of {{ totalItems }} documents
+  </span>
+  <div class="pagination-right">
+    <div class="page-size-control">
+      <span class="page-size-label">Rows per page</span>
+      <select
+        class="page-size-select"
+        [ngModel]="pageSize"
+        (ngModelChange)="onPageSizeChange($event)"
+      >
+        <option *ngFor="let opt of PAGE_SIZE_OPTIONS" [value]="opt">{{ opt }}</option>
+      </select>
+    </div>
+    <div class="page-controls" *ngIf="totalPages > 1">
+      <button
+        class="page-btn"
+        [disabled]="currentPage === 1"
+        (click)="goToPage(1)"
+        title="First page"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="11 17 6 12 11 7" />
+          <polyline points="18 17 13 12 18 7" />
+        </svg>
+      </button>
+      <button
+        class="page-btn"
+        [disabled]="currentPage === 1"
+        (click)="goToPage(currentPage - 1)"
+        title="Previous page"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <button
+        *ngFor="let p of pageNumbers"
+        class="page-btn num"
+        [class.active]="p === currentPage"
+        (click)="goToPage(p)"
+      >
+        {{ p }}
+      </button>
+      <button
+        class="page-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="goToPage(currentPage + 1)"
+        title="Next page"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+      <button
+        class="page-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="goToPage(totalPages)"
+        title="Last page"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="13 17 18 12 13 7" />
+          <polyline points="6 17 11 12 6 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

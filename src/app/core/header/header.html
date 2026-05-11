@@ -1,0 +1,60 @@
+<header class="navbar">
+  <!-- Brand -->
+  <a routerLink="/dashboard" class="brand-link">
+    <span class="brand-atlas">Atlas</span>
+    <span class="brand-copco">Copco</span>
+  </a>
+
+  <!-- Title -->
+  <span class="app-title">WebBox Application</span>
+
+  <div class="nav-spacer"></div>
+
+  <!-- user info -->
+  @if (currentUser) {
+    <div class="nav-right">
+      <div class="user-info" (click)="toggleDropdown()" [class.open]="dropdownOpen">
+        <div class="avatar">
+          <span>{{ avatarText }}</span>
+        </div>
+
+        <div class="user-meta">
+          <span class="user-name">{{ currentUser.name }}</span>
+          <span class="user-role">{{ currentUser.role }}</span>
+        </div>
+
+        <img
+          src="/icons/dropdown.png"
+          width="12"
+          height="12"
+          class="chevron"
+          [class.rotated]="dropdownOpen"
+        />
+      </div>
+
+      <!-- Dropdown menu -->
+      @if (dropdownOpen) {
+        <div class="dropdown-menu">
+          @if (currentUser.role !== UserRole.SUPPLIER) {
+            <button class="dropdown-item" (click)="onProfile()">
+              <img src="/icons/add-user.svg" width="18" height="18" />
+              Manage Users
+            </button>
+
+            <div class="dropdown-divider"></div>
+          }
+
+          <button class="dropdown-item danger" (click)="onLogout()">
+            <img src="/icons/sign-out.png" width="20" height="20" />
+            Sign Out
+          </button>
+        </div>
+      }
+    </div>
+  }
+</header>
+
+<!-- Overlay to close dropdown -->
+@if (dropdownOpen) {
+  <div class="backdrop" (click)="dropdownOpen = false"></div>
+}

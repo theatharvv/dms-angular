@@ -1,0 +1,169 @@
+<main class="main-content">
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <div class="card-icon">
+        <img src="/icons/add-user.png" width="32" height="32" />
+      </div>
+
+      <div>
+        <h2 class="card-title">Create Account</h2>
+        <p class="card-subtitle">Fill in your details to get started</p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form class="form-body" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <!-- Name -->
+      <div class="field-group">
+        <label class="field-label" for="name"> Name <span class="required">*</span> </label>
+
+        <div class="input-wrapper">
+          <img class="input-icon" src="/icons/user-grey.png" width="20" height="20" />
+
+          <input
+            id="name"
+            type="text"
+            placeholder="Your full name"
+            class="field-input"
+            formControlName="name"
+            autocomplete="name"
+            [class.input-error]="name?.invalid && name?.touched"
+          />
+        </div>
+
+        @if (name?.touched && name?.errors?.['required']) {
+          <div class="field-error">
+            <img src="/icons/error.png" width="24" height="24" class="error-icon" />
+            Name is required
+          </div>
+        }
+
+        @if (name?.touched && name?.errors?.['minlength']) {
+          <div class="field-error">
+            <img src="/icons/error.png" width="24" height="24" class="error-icon" />
+            Name must be at least 2 characters long
+          </div>
+        }
+      </div>
+
+      <!-- Email -->
+      <div class="field-group">
+        <label class="field-label" for="email"> Email <span class="required">*</span> </label>
+
+        <div class="input-wrapper">
+          <img class="input-icon" src="/icons/email.png" width="18" height="18" />
+
+          <input
+            id="email"
+            type="email"
+            placeholder="you@company.com"
+            class="field-input"
+            formControlName="email"
+            autocomplete="email"
+            [class.input-error]="email?.invalid && email?.touched"
+          />
+        </div>
+
+        @if (email?.touched && email?.errors?.['required']) {
+          <div class="field-error">
+            <img src="/icons/error.png" width="24" height="24" class="error-icon" />
+            Email is required
+          </div>
+        }
+
+        @if (email?.touched && email?.errors?.['email']) {
+          <div class="field-error">
+            <img src="/icons/error.png" width="24" height="24" class="error-icon" />
+            Invalid email format
+          </div>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="field-group">
+        <label class="field-label" for="password"> Password <span class="required">*</span> </label>
+
+        <div class="input-wrapper">
+          <img class="input-icon" src="/icons/password.png" width="18" height="18" />
+
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Min. 6 characters"
+            class="field-input"
+            formControlName="password"
+            autocomplete="new-password"
+            [class.input-error]="password?.invalid && password?.touched"
+          />
+
+          <button
+            type="button"
+            class="toggle-btn"
+            (click)="showPassword = !showPassword"
+            tabindex="-1"
+          >
+            @if (!showPassword) {
+              <img src="/icons/show-pass.png" width="18" height="18" />
+            } @else {
+              <img src="/icons/hide-pass.png" width="16" height="16" />
+            }
+          </button>
+        </div>
+
+        @if (password?.touched && password?.errors?.['required']) {
+          <div class="field-error">
+            <img src="/icons/error.png" width="24" height="24" class="error-icon" />
+            Password is required
+          </div>
+        }
+
+        @if (password?.touched && password?.errors?.['minlength']) {
+          <div class="field-error">
+            <img src="/icons/error.png" width="24" height="24" class="error-icon" />
+            Password must be at least 6 characters long
+          </div>
+        }
+
+        <!-- Strength -->
+        @if (password?.value?.length > 5) {
+          <div class="strength-bar">
+            <div class="strength-track">
+              <div
+                class="strength-fill"
+                [style.width]="strengthPercent"
+                [class]="strengthClass"
+              ></div>
+            </div>
+
+            <span class="strength-label" [class]="strengthClass">
+              {{ strengthLabel }}
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- Server Error -->
+      @if (error) {
+        <div class="error-banner">
+          <img src="/icons/error.png" width="26" height="26" />
+          {{ error }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="action-row">
+        <a routerLink="/" class="login-link">Back to Login</a>
+
+        <div class="btn-group">
+          <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+
+          <button type="submit" class="btn-save" [disabled]="registerForm.invalid">
+            <span>Register</span>
+            <img src="/icons/right-arrow.png" width="18" height="18" />
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>

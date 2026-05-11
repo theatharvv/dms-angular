@@ -1,0 +1,128 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      Edit User Details
+    </button>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="editUserForm">
+      <div class="form-row top-row">
+
+        <!-- Name -->
+        <div class="field-group">
+          <input
+            formControlName="name"
+            id="name"
+            placeholder="Name *"
+            class="form-input"
+            [class.input-error]="isFieldInvalid('name')"
+          />
+          @if (isFieldInvalid('name')) {
+            <span class="error-msg">
+              @if (editUserForm.get('name')?.errors?.['required']) {
+                Name is required.
+              } @else if (editUserForm.get('name')?.errors?.['minlength']) {
+                Name must be at least 2 characters.
+              } @else if (editUserForm.get('name')?.errors?.['maxlength']) {
+                Name must be 100 characters or fewer.
+              }
+            </span>
+          }
+        </div>
+
+        <!-- Email (always disabled) -->
+        <div class="field-group">
+          <input
+            formControlName="email"
+            id="email"
+            type="email"
+            placeholder="Email *"
+            class="form-input disabled-select"
+          />
+        </div>
+
+        <!-- Role -->
+        <div class="field-group">
+          <select
+            formControlName="role"
+            id="role"
+            class="form-select"
+            [class.disabled-select]="isAdmin"
+            [class.input-error]="isFieldInvalid('role')"
+          >
+            <option value="" disabled hidden>Role *</option>
+
+            @if (isSuperAdmin) {
+              <option
+                [value]="UserRole.ADMIN"
+                [disabled]="editUserForm.get('role')?.value === UserRole.ADMIN"
+                [hidden]="editUserForm.get('role')?.value === UserRole.ADMIN"
+              >
+                Admin
+              </option>
+            }
+
+            <option
+              [value]="UserRole.SUPPLIER"
+              [disabled]="editUserForm.get('role')?.value === UserRole.SUPPLIER"
+              [hidden]="editUserForm.get('role')?.value === UserRole.SUPPLIER"
+            >
+              Supplier
+            </option>
+          </select>
+          @if (isFieldInvalid('role')) {
+            <span class="error-msg">Role is required.</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-row bottom-row">
+
+        <!-- Status -->
+        <div class="field-group narrow">
+          <select
+            formControlName="status"
+            id="status"
+            class="form-select"
+            [class.input-error]="isFieldInvalid('status')"
+          >
+            <option value="" disabled hidden>Status *</option>
+            <option
+              [value]="UserStatus.INACTIVE"
+              [disabled]="editUserForm.get('status')?.value === UserStatus.INACTIVE"
+              [hidden]="editUserForm.get('status')?.value === UserStatus.INACTIVE"
+            >
+              Inactive
+            </option>
+            <option
+              [value]="UserStatus.ACTIVE"
+              [disabled]="editUserForm.get('status')?.value === UserStatus.ACTIVE"
+              [hidden]="editUserForm.get('status')?.value === UserStatus.ACTIVE"
+            >
+              Active
+            </option>
+          </select>
+          @if (isFieldInvalid('status')) {
+            <span class="error-msg">Status is required.</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-cancel" type="button" (click)="goBack()">Cancel</button>
+        <button
+          class="btn-save"
+          type="submit"
+          (click)="updateUser()"
+          [disabled]="editUserForm.invalid"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

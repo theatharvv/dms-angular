@@ -1,0 +1,137 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">
+      <img src="/icons/back-arrow.png" width="24" height="24" />
+      Add User Details
+    </button>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="userForm" (ngSubmit)="addUser()">
+      <div class="form-row top-row">
+        <div class="field-group">
+          <input
+            formControlName="name"
+            id="name"
+            placeholder="Name *"
+            class="form-input"
+            [class.input-error]="isInvalid('name')"
+          />
+
+          @if (isInvalid('name')) {
+            <span class="error-msg">
+              @if (f['name'].errors?.['required']) {
+                Name is required.
+              }
+
+              @if (f['name'].errors?.['minlength']) {
+                At least 2 characters.
+              }
+
+              @if (f['name'].errors?.['maxlength']) {
+                Max 50 characters.
+              }
+            </span>
+          }
+        </div>
+
+        <div class="field-group">
+          <input
+            formControlName="email"
+            id="email"
+            type="email"
+            placeholder="Email *"
+            class="form-input"
+            [class.input-error]="isInvalid('email')"
+          />
+
+          @if (isInvalid('email')) {
+            <span class="error-msg">
+              @if (f['email'].errors?.['required']) {
+                Email is required.
+              }
+
+              @if (f['email'].errors?.['email']) {
+                Enter a valid email address.
+              }
+            </span>
+          }
+        </div>
+
+        <div class="field-group">
+          <select
+            formControlName="role"
+            id="role"
+            class="form-select"
+            [class.disabled-select]="!isSuperAdmin"
+            [class.input-error]="isInvalid('role')"
+          >
+            <option value="" disabled hidden>Role *</option>
+            <option
+              [value]="UserRole.ADMIN"
+              [disabled]="f['role'].value === UserRole.ADMIN"
+              [hidden]="f['role'].value === UserRole.ADMIN"
+            >
+              Admin
+            </option>
+            <option
+              [value]="UserRole.SUPPLIER"
+              [disabled]="f['role'].value === UserRole.SUPPLIER"
+              [hidden]="f['role'].value === UserRole.SUPPLIER"
+            >
+              Supplier
+            </option>
+          </select>
+
+          @if (isInvalid('role')) {
+            <span class="error-msg">
+              @if (f['role'].errors?.['required']) {
+                Role is required.
+              }
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="form-row bottom-row">
+        <div class="field-group narrow">
+          <select
+            formControlName="status"
+            id="status"
+            class="form-select"
+            [class.input-error]="isInvalid('status')"
+          >
+            <option value="" disabled hidden>Status *</option>
+            <option
+              [value]="UserStatus.INACTIVE"
+              [disabled]="f['status'].value === UserStatus.INACTIVE"
+              [hidden]="f['status'].value === UserStatus.INACTIVE"
+            >
+              Inactive
+            </option>
+            <option
+              [value]="UserStatus.ACTIVE"
+              [disabled]="f['status'].value === UserStatus.ACTIVE"
+              [hidden]="f['status'].value === UserStatus.ACTIVE"
+            >
+              Active
+            </option>
+          </select>
+
+          @if (isInvalid('status')) {
+            <span class="error-msg">
+              @if (f['status'].errors?.['required']) {
+                Status is required.
+              }
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="goBack()">Cancel</button>
+        <button type="submit" class="btn-save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

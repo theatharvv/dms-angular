@@ -1,0 +1,177 @@
+<div class="page-wrapper">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <a class="back-btn" routerLink="/dashboard">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </a>
+      <h1 class="page-title">List of Users</h1>
+    </div>
+    <button class="btn-add" (click)="goToAddUser()">Add New User</button>
+  </div>
+
+  <!-- Table Card -->
+  <div class="table-card">
+    <!-- Pagination Component -->
+    <app-pagination
+      [totalItems]="filteredUsers.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      (pageChanged)="onPageChanged($event)"
+      (pageSizeChanged)="onPageSizeChanged($event)"
+    ></app-pagination>
+
+    <!-- Role Tabs -->
+    @if (isSuperAdmin) {
+      <div class="table-toolbar">
+        <div class="role-tabs">
+          <button
+            class="tab"
+            [class.active]="activeTab === 'SUPPLIER'"
+            (click)="setTab('SUPPLIER')"
+          >
+            Supplier
+          </button>
+          <button class="tab" [class.active]="activeTab === 'ADMIN'" (click)="setTab('ADMIN')">
+            Admin
+          </button>
+        </div>
+      </div>
+    }
+
+    <table class="data-table">
+      <thead>
+        <!-- Column Headers -->
+        <tr class="header-row">
+          <th class="col-name">User Name</th>
+          <th class="col-email">Email ID</th>
+          <th class="col-date sortable" (click)="sortBy('date')">
+            Created Date
+            <svg
+              class="sort-icon"
+              [class.asc]="sortField === 'date' && sortAsc"
+              [class.desc]="sortField === 'date' && !sortAsc"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <polyline points="6 9 12 3 18 9" />
+              <polyline points="6 15 12 21 18 15" />
+            </svg>
+          </th>
+          <th class="col-status">Status</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+
+        <!-- Filter Row -->
+        <app-filter-bar
+          [filters]="currentFilters"
+          [showTime]="false"
+          [statusOptions]="userStatusOptions"
+          placeholder1="Search name"
+          placeholder2="Search email"
+          (filtersChanged)="onFiltersChanged($event)"
+          (filtersCleared)="onFiltersCleared()"
+        ></app-filter-bar>
+      </thead>
+
+      <tbody>
+        @for (user of pagedUsers; track user.id) {
+          <tr class="data-row">
+            <td class="col-name">{{ user.name }}</td>
+            <td class="col-email">{{ user.email }}</td>
+            <td class="col-date">
+              <span class="cell-icon-text">
+                <img src="/icons/calendar.png" width="16" height="16" />
+                {{ user.createdAt | date: 'dd/MM/yyyy' }}
+              </span>
+            </td>
+            <td class="col-status">
+              <span
+                class="badge"
+                [ngClass]="user.status === UserStatus.ACTIVE ? 'badge-active' : 'badge-inactive'"
+              >
+                @if (user.status === UserStatus.ACTIVE) {
+                  <img src="/icons/green-tick.png" width="14" height="14" />
+                } @else {
+                  <img src="/icons/red-cross.png" width="12" height="12" />
+                }
+                {{ user.status | titlecase }}
+              </span>
+            </td>
+            <td class="col-actions">
+              <div class="action-btns">
+                <button class="action-btn edit" title="Edit User" (click)="goToEditUser(user)">
+                  <img src="/icons/edit.png" width="16" height="16" />
+                </button>
+                <button class="action-btn delete" title="Delete" (click)="onDelete(user)">
+                  <img src="/icons/delete-grey.png" width="14" height="14" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="empty-state">
+              <img src="/icons/user-grey.png" width="60" height="60" />
+              <p>No users found</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Delete Modal — Step 1: Confirm user deletion -->
+  @if (userToDelete && deleteStep === 'confirm-user') {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-icon">
+          <img src="/icons/delete-red.png" width="28" height="28" />
+        </div>
+        <h3 class="modal-title">Delete User?</h3>
+        <p class="modal-body">
+          <strong>{{ userToDelete.name }}</strong> will be permanently removed.
+        </p>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+          <button class="btn-delete-confirm" (click)="confirmDeleteUser()">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Modal — Step 2: Ask about files -->
+  @if (userToDelete && deleteStep === 'confirm-files') {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-icon warn">
+          <img src="/icons/file-red.png" width="24" height="24" />
+        </div>
+        <h3 class="modal-title">Delete User's Files?</h3>
+        <p class="modal-body">
+          <strong>{{ userToDelete.name }}</strong> has uploaded files. Do you want to delete them
+          too?
+        </p>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="confirmDeleteFiles(false)">Keep Files</button>
+          <button class="btn-delete-confirm" (click)="confirmDeleteFiles(true)">
+            Delete Files
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

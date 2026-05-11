@@ -1,0 +1,268 @@
+/* ── Variables matching WebBox / Atlas Copco palette ── */
+:host {
+  --teal:       #0097a7;
+  --teal-dark:  #00838f;
+  --teal-light: #e0f7fa;
+  --bg:         #f0f2f4;
+  --white:      #ffffff;
+  --border:     #d0d5dd;
+  --text-main:  #1a2332;
+  --text-muted: #6b7280;
+  --error:      #d32f2f;
+  --error-bg:   #fef2f2;
+  --shadow:     0 2px 12px rgba(0, 0, 0, 0.10);
+  --radius:     6px;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Fill remaining space below the header, no scroll */
+  display: flex;
+  height: calc(100vh - 56px); /* 56px = header height */
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* ── Main content area ── */
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+  animation: fadeUp 0.3s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Card header strip ── */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 28px 20px;
+  border-bottom: 2px solid var(--teal);
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--teal-light);
+  color: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 2px;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── Form body ── */
+.form-body {
+  padding: 28px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Field group ── */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  /* gap: 8px; */
+  /* background: var(--error-bg); */
+  /* border: 1px solid #fca5a5; */
+  /* border-radius: var(--radius); */
+  /* padding: 10px 14px; */
+  font-size: 14px;
+  color: var(--error);
+  animation: shake 0.3s ease;
+}
+
+.error-icon{
+ margin-right:4px;
+}
+
+.required { color: var(--teal); }
+
+/* ── Input wrapper with icon ── */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.field-input {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 40px 0 38px;
+  font-size: 14px;
+  color: var(--text-main);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  box-sizing: border-box;
+}
+
+.field-input::placeholder { color: #b0b7c3; }
+
+.field-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 151, 167, 0.12);
+}
+
+.field-input.input-error {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.08);
+}
+
+/* ── Password toggle ── */
+.toggle-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.toggle-btn:hover { color: var(--teal); }
+
+/* ── Error banner ── */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--error-bg);
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--error);
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
+
+/* ── Action row ── */
+.action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+}
+
+.register-link {
+  font-size: 13px;
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.register-link:hover { color: var(--teal-dark); text-decoration: underline; }
+
+.btn-group {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cancel {
+  height: 40px;
+  padding: 0 24px;
+  border-radius: 20px;
+  border: 1.5px solid var(--teal);
+  background: transparent;
+  color: var(--teal);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.btn-cancel:hover { background: var(--teal-light); }
+
+.btn-save {
+  height: 40px;
+  padding: 0 28px;
+  border-radius: 20px;
+  border: none;
+  background: var(--teal);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+
+.btn-save:hover {
+  background: var(--teal-dark);
+  box-shadow: 0 4px 12px rgba(0, 151, 167, 0.35);
+}
+
+.btn-save:active { transform: translateY(1px); }
+
+
+.btn-save:disabled {
+  background: var(--teal-dark);
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}

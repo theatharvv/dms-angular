@@ -1,0 +1,77 @@
+<ng-container>
+  <tr class="filter-row">
+    @if (showSearch1) {
+      <td class="col-search1">
+        <input
+          class="filter-input"
+          [placeholder]="placeholder1"
+          [ngModel]="filters.search1"
+          (ngModelChange)="onFilterChange('search1', $event)"
+        />
+      </td>
+    }
+
+    @if (showSearch2) {
+      <td class="col-search2">
+        <input
+          class="filter-input"
+          [placeholder]="placeholder2"
+          [ngModel]="filters.search2"
+          (ngModelChange)="onFilterChange('search2', $event)"
+        />
+      </td>
+    }
+
+    <td class="col-date">
+      <input
+        class="filter-input"
+        type="date"
+        [ngModel]="filters.date"
+        (ngModelChange)="onFilterChange('date', $event)"
+      />
+    </td>
+
+    @if (showTime) {
+      <td class="col-time">
+        <input
+          class="filter-input"
+          type="time"
+          [ngModel]="filters.time"
+          (ngModelChange)="onFilterChange('time', $event)"
+        />
+      </td>
+    }
+
+    <td class="col-status">
+      <select
+        class="filter-input"
+        [ngModel]="filters.status"
+        (ngModelChange)="onFilterChange('status', $event)"
+      >
+        <option value="">All</option>
+
+        @for (opt of statusOptions; track opt.value) {
+          <option [value]="opt.value">
+            {{ opt.label }}
+          </option>
+        }
+      </select>
+    </td>
+
+    <td class="col-actions">
+      <button class="btn-clear" (click)="clearFilters()" title="Clear filters">
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <line x1="18" x2="6" y1="6" y2="18" />
+          <line x1="6" x2="18" y1="6" y2="18" />
+        </svg>
+      </button>
+    </td>
+  </tr>
+</ng-container>
